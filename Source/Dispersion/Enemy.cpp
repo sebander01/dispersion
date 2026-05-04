@@ -30,10 +30,20 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 
 /// <summary>
-/// Follow the player
+/// React to light follow the player if not in light
 /// </summary>
-void AEnemy::followPlayer(AActor* goalObject)
+void AEnemy::EnemyReactToLight(AActor* goalObject)
 {
-	UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), goalObject);
+	//If not in light
+	if (isLight != true)
+	{
+		//Follow our goal object that being the player
+		UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), goalObject);
+	}
+	//If in light
+	else
+	{
+
+	}
 }
 

@@ -27,10 +27,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	float walkingSpeed;
 
-	UFUNCTION(BlueprintCallable, Category = "Enemy Movement")
-	void followPlayer(AActor* goalObject);
+	UFUNCTION(BlueprintCallable, Category = "Enemy Behavior")
+	void EnemyReactToLight(AActor* goalObject);
+
+	//Delete later this is for demo
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
+	AActor* targetObject;
+
+	//Delete later this is for demo
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
+	bool isLight;
 
 };
