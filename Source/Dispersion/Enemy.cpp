@@ -13,6 +13,8 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	//Get all the light sources in the scene
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), LightSourceTag, LightsInScene);
 }
 
 // Called every frame
@@ -35,7 +37,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::EnemyReactToLight(AActor* goalObject)
 {
 	//If not in light
-	if (isLight != true)
+	if (isLight == false)
 	{
 		//Follow our goal object that being the player
 		UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), goalObject);

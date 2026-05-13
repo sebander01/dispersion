@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Enemy.generated.h"
 
 UCLASS()
@@ -33,11 +34,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Enemy Behavior")
 	void EnemyReactToLight(AActor* goalObject);
 
-	//Delete later this is for demo
+	//Variables for light sources
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
-	AActor* targetObject;
+	FName LightSourceTag;
 
-	//Delete later this is for demo
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
+	TArray<AActor*> LightsInScene;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	bool isLight;
 
