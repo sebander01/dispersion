@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SphereComponent.h"
 #include "Enemy.generated.h"
 
 UCLASS()
@@ -32,7 +33,7 @@ public:
 	float walkingSpeed;
 
 	UFUNCTION(BlueprintCallable, Category = "Enemy Behavior")
-	void EnemyReactToLight(AActor* goalObject);
+	void EnemyReactToLight(AActor* goalObject, float EnemyContinuanceOffset);
 
 	//Variables for light sources
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
@@ -43,5 +44,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	bool isLight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
+	AActor* Light;
 
 };
