@@ -96,10 +96,6 @@ void AEnemy::EnemyReactToLight(AActor* goalObject, float EnemyContinuanceOffset)
 			//Follow our destination out of the light
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), goal);
 		}
-		else 
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Was Null");
-		}
 	}
 	//If the enemy shouldn't be moving only turning to the player
 	else if (enemyState == EEnemyMovement::Stationary)
