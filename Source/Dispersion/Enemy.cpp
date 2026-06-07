@@ -37,13 +37,13 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::EnemyReactToLight(AActor* goalObject, float EnemyContinuanceOffset)
 {
 	//If not in light
-	if (isLight == false)
+	if (enemyState == EEnemyMovement::TowardsTarget)
 	{
 		//Follow our goal object that being the player
 		UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), goalObject);
 	}
 	//If in light
-	else
+	else if (enemyState == EEnemyMovement::AwayFromTarget)
 	{
 		//If we have a light source
 		if (Light != NULL)
@@ -96,6 +96,15 @@ void AEnemy::EnemyReactToLight(AActor* goalObject, float EnemyContinuanceOffset)
 			//Follow our destination out of the light
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), goal);
 		}
+		else 
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Was Null");
+		}
+	}
+	//If the enemy shouldn't be moving only turning to the player
+	else if (enemyState == EEnemyMovement::Stationary)
+	{
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), this->GetActorLocation());
 	}
 }
 

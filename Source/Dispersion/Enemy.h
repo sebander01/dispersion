@@ -9,6 +9,15 @@
 #include "Components/SphereComponent.h"
 #include "Enemy.generated.h"
 
+//An enum for the states of enemy movement
+UENUM(BlueprintType)
+enum class EEnemyMovement : uint8
+{
+	Stationary UMETA(DisplayName = "Stationary"),
+	TowardsTarget UMETA(DisplayName = "Towards Target"),
+	AwayFromTarget UMETA(DisplayName = "Away From Target")
+};
+
 UCLASS()
 class DISPERSION_API AEnemy : public ACharacter
 {
@@ -43,7 +52,7 @@ public:
 	TArray<AActor*> LightsInScene;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
-	bool isLight;
+	EEnemyMovement enemyState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	AActor* Light;
