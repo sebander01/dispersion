@@ -44,6 +44,17 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	//Cast as EnhancedInputComponent
+	UEnhancedInputComponent* CurrentInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	//Sprinting control
+	//Bind sprinting control when pressed down
+	CurrentInputComponent->BindAction(sprint, ETriggerEvent::Started, this, &APlayerScript::EnableSprint);
+	//Bind sprinting control for when released
+	CurrentInputComponent->BindAction(sprint, ETriggerEvent::Completed, this, &APlayerScript::EnableSprint);
+
+	//Bind jumping control
+	CurrentInputComponent->BindAction(playerJump, ETriggerEvent::Triggered, this, &APlayerScript::PlayerJump);
 }
 
 /// <summary>
@@ -52,7 +63,51 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 /// <param name="playerBody"></param>
 void APlayerScript::PlayerMovement(FVector direction)
 {
-	//Move the player body based on the direction variable assigned in the blueprint
-	playerBody->AddImpulse(direction * playerSpeed);
+	//If sprinting
+	if (sprinting)
+	{
+		//Move the player body based on the direction variable assigned in the blueprint
+		playerBody->AddImpulse(direction * sprintSpeed);
+	}
+	//If not sprinting
+	else
+	{
+		//Move the player body based on the direction variable assigned in the blueprint
+		playerBody->AddImpulse(direction * playerSpeed);
+	}
+}
+
+//A method to allow the player to jump
+void APlayerScript::PlayerJump()
+{
+	//If sprinting is enabled
+	if (sprinting)
+	{
+		//Add an upwords impulse
+		playerBody->AddImpulse(FVector(0, 0, sprintJumpForce));
+	}
+	//If sprinting is disabled
+	else
+	{
+		//Add an upwords inpulse
+		playerBody->AddImpulse(FVector(0, 0, playerJumpForce));
+	}
+}
+
+//A method to enable sprinting
+void APlayerScript::EnableSprint()
+{
+	//If sprinting is enabled
+	if (sprinting)
+	{
+		//Disable sprinting
+		sprinting = false;
+	}
+	//If sprinting is disabled
+	else
+	{
+		//Enable sprinting
+		sprinting = true;
+	}
 }
 
