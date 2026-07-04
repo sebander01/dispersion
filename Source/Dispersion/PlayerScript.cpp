@@ -9,6 +9,12 @@ APlayerScript::APlayerScript()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Defaults for collision
+	//Find the collision for the player object
+	PlayerCollision = FindComponentByClass<UPrimitiveComponent>();
+	//Make sure this is the root component
+	RootComponent = PlayerCollision;
+
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +35,11 @@ void APlayerScript::BeginPlay()
 
 	//On begin play get the player movement component
 	playerBody = GetCharacterMovement();
-	
+
+	//Bind collision
+	//Bind hit event
+	PlayerCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerScript::OnActorBeginOverlap);
+	PlayerCollision->OnComponentHit.AddDynamic(this, &APlayerScript::OnHit);
 }
 
 // Called every frame
@@ -55,6 +65,33 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	//Bind jumping control
 	CurrentInputComponent->BindAction(playerJump, ETriggerEvent::Triggered, this, &APlayerScript::PlayerJump);
+}
+
+//	<summary>
+//	Collision implimentation on overlap
+//	</summary>
+//	<param name="overlappingComponent">The component that detected the hit</param>
+//	<param name="otherActor">The other actor that was hit</param>
+//	<param name="otherComponent">The overlaped component of  the other actor</param>
+//	<param name="otherBodyIndex">Index of the body that was overlapped</param>
+//	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
+//	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
+void APlayerScript::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult)
+{
+
+}
+
+//	<summary>
+//	Collision implimentation on hit
+//	</summary>
+//	<param name="hitComponent">The component that was hit</param>
+//	<param name="otherActor">The other actor that was hit</param>
+//	<param name="otherComponent">The component that was hit of the actor actor</param>
+//	<param name="collisionForce">The force of the collision</param>
+//	<param name="hit">Information about the hit</param>
+void APlayerScript::OnHit(UPrimitiveComponent* hitComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, FVector collisionForce, const FHitResult& hit)
+{
+
 }
 
 /// <summary>
