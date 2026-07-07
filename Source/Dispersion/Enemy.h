@@ -7,6 +7,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Enemy.generated.h"
 
 //An enum for the states of enemy movement
@@ -38,6 +39,34 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+#pragma region collision
+	UFUNCTION()
+	//	<summary>
+	//	Implimentation of begin overlap
+	//	</summary>
+	//	<param name="overlappingComponent">The component that detected the hit</param>
+	//	<param name="otherActor">The other actor that was hit</param>
+	//	<param name="otherComponent">The overlaped component of  the other actor</param>
+	//	<param name="otherBodyIndex">Index of the body that was overlapped</param>
+	//	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
+	//	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
+	void OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult);
+
+	UFUNCTION()
+	//	<summary>
+	//	Implimentation of begin overlap
+	//	</summary>
+	//	<param name="overlappingComponent">The component that detected the hit</param>
+	//	<param name="otherActor">The other actor that was hit</param>
+	//	<param name="otherComponent">The overlaped component of  the other actor</param>
+	//	<param name="otherBodyIndex">Index of the body that was overlapped</param>
+	//	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
+	//	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
+	void OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex);
+
+	//Collision for enemy
+	UCapsuleComponent* EnemyCollision;
+#pragma endregion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	float walkingSpeed;
 
@@ -47,9 +76,6 @@ public:
 	//Variables for light sources
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	FName LightSourceTag;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
-	TArray<AActor*> LightsInScene;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	EEnemyMovement enemyState;

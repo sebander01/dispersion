@@ -13,8 +13,17 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	//Get all the light sources in the scene
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), LightSourceTag, LightsInScene);
+
+	//Defaults for collision
+	//Find the capsule component of our enemy where we assume collision is
+	EnemyCollision = FindComponentByClass<UCapsuleComponent>();
+
+	//Bind collision to our player object that is a capsule collected in the constructor
+	//Bind begin overlap event
+	EnemyCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnActorBeginOverlap);
+	//Bind end overlap event
+	EnemyCollision->OnComponentEndOverlap.AddDynamic(this, &AEnemy::OnActorEndOverlap);
+
 }
 
 // Called every frame
@@ -29,6 +38,46 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+//	<summary>
+//	Begin overlap
+//	</summary>
+//	<param name="overlappingComponent">The component that detected the hit</param>
+//	<param name="otherActor">The other actor that was hit</param>
+//	<param name="otherComponent">The overlaped component of  the other actor</param>
+//	<param name="otherBodyIndex">Index of the body that was overlapped</param>
+//	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
+//	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
+void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult)
+{
+	//If the tag of the colliding actor is our light tag
+	if (otherActor->Tags.Contains(LightSourceTag))
+	{
+		//The enemy is in light and needs to move away from it
+		enemyState = EEnemyMovement::AwayFromTarget;
+	}
+	//If the colliding object is not a light
+	else
+	{
+		//The enemy is not in light and should move towards the target
+		enemyState = EEnemyMovement::TowardsTarget;
+	}
+}
+
+//	<summary>
+//	End overlap
+//	</summary>
+//	<param name="overlappingComponent">The component that detected the hit</param>
+//	<param name="otherActor">The other actor that was hit</param>
+//	<param name="otherComponent">The overlaped component of  the other actor</param>
+//	<param name="otherBodyIndex">Index of the body that was overlapped</param>
+//	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
+//	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
+void AEnemy::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex)
+{
+	//When our overlap of an actor ends we reset the enemy position to stationary
+	enemyState = EEnemyMovement::Stationary;
 }
 
 /// <summary>
