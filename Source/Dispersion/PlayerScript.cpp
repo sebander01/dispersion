@@ -10,10 +10,8 @@ APlayerScript::APlayerScript()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Defaults for collision
-	//Find the collision for the player object
-	PlayerCollision = FindComponentByClass<UPrimitiveComponent>();
-	//Make sure this is the root component
-	RootComponent = PlayerCollision;
+	//Find the capsule component of our player where we assume collision is
+	PlayerCollision = FindComponentByClass<UCapsuleComponent>();
 
 }
 
@@ -21,6 +19,8 @@ APlayerScript::APlayerScript()
 void APlayerScript::BeginPlay()
 {
 	Super::BeginPlay();
+	//Set can jump to true
+	canJump = true;
 
 	//Enable the player controls
 	//Get the player controller
@@ -36,9 +36,10 @@ void APlayerScript::BeginPlay()
 	//On begin play get the player movement component
 	playerBody = GetCharacterMovement();
 
-	//Bind collision
-	//Bind hit event
+	//Bind collision to our player object that is a capsule collected in the constructor
+	//Bind overlap event
 	PlayerCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerScript::OnActorBeginOverlap);
+	//Bind hit event
 	PlayerCollision->OnComponentHit.AddDynamic(this, &APlayerScript::OnHit);
 }
 
@@ -91,7 +92,16 @@ void APlayerScript::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponen
 //	<param name="hit">Information about the hit</param>
 void APlayerScript::OnHit(UPrimitiveComponent* hitComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, FVector collisionForce, const FHitResult& hit)
 {
-
+	//If our hit result tag is the same as our jumpResetTag allowing the player to reset there jumping
+	if (otherActor->Tags.Contains(jumpResetTag))
+	{
+		canJump = true;
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Hit"));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Not Hit"));
+	}
 }
 
 /// <summary>
@@ -117,17 +127,23 @@ void APlayerScript::PlayerMovement(FVector direction)
 //A method to allow the player to jump
 void APlayerScript::PlayerJump()
 {
-	//If sprinting is enabled
-	if (sprinting)
+	//If we can jump
+	if (canJump)
 	{
-		//Add an upwords impulse
-		playerBody->AddImpulse(FVector(0, 0, sprintJumpForce));
-	}
-	//If sprinting is disabled
-	else
-	{
-		//Add an upwords inpulse
-		playerBody->AddImpulse(FVector(0, 0, playerJumpForce));
+		//we can no longer jump until we collide with an object capable of resetting it
+		canJump = false;
+		//If sprinting is enabled
+		if (sprinting)
+		{
+			//Add an upwords impulse
+			playerBody->AddImpulse(FVector(0, 0, sprintJumpForce));
+		}
+		//If sprinting is disabled
+		else
+		{
+			//Add an upwords inpulse
+			playerBody->AddImpulse(FVector(0, 0, playerJumpForce));
+		}
 	}
 }
 
