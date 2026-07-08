@@ -66,8 +66,10 @@ void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AAct
 	//If the colliding object is not a light
 	else
 	{
-		//The enemy is not in light and should move towards the target
-		enemyState = EEnemyMovement::TowardsTarget;
+		////The enemy is not in light and should move towards the target
+		//enemyState = EEnemyMovement::TowardsTarget;
+		//When we are not overlapping the light we should stop
+		enemyState = EEnemyMovement::Stationary;
 	}
 }
 
@@ -82,8 +84,11 @@ void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AAct
 //	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
 void AEnemy::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex)
 {
-	//When our overlap of an actor ends we reset the enemy position to stationary
-	enemyState = EEnemyMovement::Stationary;
+	//If the tag of the colliding actor is our light tag
+	if (otherActor->Tags.Contains(LightSourceTag))
+	{
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), (this->GetActorForwardVector()) - 2);
+	}
 }
 
 /// <summary>
@@ -155,7 +160,7 @@ void AEnemy::EnemyReactToLight(float EnemyContinuanceOffset)
 	//If the enemy shouldn't be moving only turning to the player
 	else if (enemyState == EEnemyMovement::Stationary)
 	{
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), this->GetActorLocation());
+		
 	}
 }
 

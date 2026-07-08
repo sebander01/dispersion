@@ -84,10 +84,8 @@ void APlayerScript::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent,
 {
 	//If the overlapping object contains the tag to tell the game it was a light
 	//Then we need to have the game switch the state to change the player
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT(" " + Cast<AEnemy>(enemyList[0])->LightSourceTag.ToString()));
 	if (otherActor->Tags.Contains(Cast<AEnemy>(enemyList[0])->LightSourceTag))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT("Passed"));
 		//For each enemy in the enemyList
 		for (AActor* enemy : enemyList)
 		{
@@ -95,7 +93,6 @@ void APlayerScript::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent,
 			AEnemy* enemyClass = Cast<AEnemy>(enemy);
 			//change the state of the specifc enemy to move towards the player
 			enemyClass->enemyState = EEnemyMovement::TowardsTarget;
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT("Flipped for enemy: " + enemy->GetName()));
 		}
 	}
 }
@@ -176,4 +173,3 @@ void APlayerScript::EnableSprint()
 		sprinting = true;
 	}
 }
-

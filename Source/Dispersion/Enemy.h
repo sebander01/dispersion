@@ -66,6 +66,7 @@ public:
 
 	//Collision for enemy
 	UCapsuleComponent* EnemyCollision;
+
 #pragma endregion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	float walkingSpeed;
