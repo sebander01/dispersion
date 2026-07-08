@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Enemy.h"
 #include "PlayerScript.generated.h"
 
 UCLASS()
@@ -29,6 +30,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//A list of pointers to the enemies in the world
+	TArray<AActor*> enemyList;
 
 #pragma region Public Collision functions and properties
 

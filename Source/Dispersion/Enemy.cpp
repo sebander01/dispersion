@@ -26,6 +26,7 @@ void AEnemy::BeginPlay()
 
 	//Get the player
 	player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT(" " + this->GetActorNameOrLabel() + " " + player->GetActorNameOrLabel()));
 
 }
 
@@ -57,6 +58,9 @@ void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AAct
 	//If the tag of the colliding actor is our light tag
 	if (otherActor->Tags.Contains(LightSourceTag))
 	{
+		//Save the coliding light source
+		Light = otherActor;
+
 		//The enemy is in light and needs to move away from it
 		enemyState = EEnemyMovement::AwayFromTarget;
 	}

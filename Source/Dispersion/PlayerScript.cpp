@@ -12,7 +12,6 @@ APlayerScript::APlayerScript()
 	//Defaults for collision
 	//Find the capsule component of our player where we assume collision is
 	PlayerCollision = FindComponentByClass<UCapsuleComponent>();
-
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +40,9 @@ void APlayerScript::BeginPlay()
 	PlayerCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerScript::OnActorBeginOverlap);
 	//Bind hit event
 	PlayerCollision->OnComponentHit.AddDynamic(this, &APlayerScript::OnHit);
+
+	//Fill the list of enemies
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), enemyList);
 }
 
 // Called every frame
@@ -79,7 +81,18 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 //	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
 void APlayerScript::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult)
 {
-
+	//If the overlapping object is correctly tagged the same way as the enemy light source we use enemyList[0] because it's the same in each instance
+	if (!otherActor->Tags.Contains(Cast<AEnemy>(enemyList[0])->LightSourceTag))
+	{
+		//For each enemy in the enemyList
+		for (AActor* enemy : enemyList)
+		{
+			//Cast to enemy class to access it's variables
+			AEnemy* enemyClass = Cast<AEnemy>(enemy);
+			//change the state of the specifc enemy to move towards the player
+			enemyClass->enemyState = EEnemyMovement::TowardsTarget;
+		}
+	}
 }
 
 //	<summary>

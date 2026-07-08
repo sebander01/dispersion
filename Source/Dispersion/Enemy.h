@@ -8,7 +8,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "PlayerScript.h"
 #include "Enemy.generated.h"
 
 //An enum for the states of enemy movement
