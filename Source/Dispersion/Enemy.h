@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "PlayerScript.h"
 #include "Enemy.generated.h"
 
 //An enum for the states of enemy movement
@@ -71,7 +72,7 @@ public:
 	float walkingSpeed;
 
 	UFUNCTION(BlueprintCallable, Category = "Enemy Behavior")
-	void EnemyReactToLight(AActor* goalObject, float EnemyContinuanceOffset);
+	void EnemyReactToLight(float EnemyContinuanceOffset);
 
 	//Variables for light sources
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
@@ -82,5 +83,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	AActor* Light;
+
+	//A variable to get the player
+	AActor* player;
 
 };

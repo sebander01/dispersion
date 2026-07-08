@@ -24,6 +24,9 @@ void AEnemy::BeginPlay()
 	//Bind end overlap event
 	EnemyCollision->OnComponentEndOverlap.AddDynamic(this, &AEnemy::OnActorEndOverlap);
 
+	//Get the player
+	player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
 }
 
 // Called every frame
@@ -83,13 +86,13 @@ void AEnemy::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor
 /// <summary>
 /// React to light follow the player if not in light
 /// </summary>
-void AEnemy::EnemyReactToLight(AActor* goalObject, float EnemyContinuanceOffset)
+void AEnemy::EnemyReactToLight(float EnemyContinuanceOffset)
 {
 	//If not in light
 	if (enemyState == EEnemyMovement::TowardsTarget)
 	{
 		//Follow our goal object that being the player
-		UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), goalObject);
+		UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), player);
 	}
 	//If in light
 	else if (enemyState == EEnemyMovement::AwayFromTarget)
