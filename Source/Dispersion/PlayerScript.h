@@ -30,8 +30,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	//A list of pointers to the enemies in the world
+	
+	UPROPERTY(EditAnywhere, Category = "Test Value")
+	//A list of actors to the enemies in the world
 	TArray<AActor*> enemyList;
 
 #pragma region Public Collision functions and properties
@@ -42,9 +43,21 @@ public:
 	//it is directly interacting with parts of the engine that require it. Without it OnHit and OnActorBeginOverlap will simply do nothing.
 	//Not because it's broken but because unreal does not know that it should do anything with them at all.
 
+	//UFUNCTION()
+	////	<summary>
+	////	Collision implimentation on overlap
+	////	</summary>
+	////	<param name="overlappingComponent">The component that detected the hit</param>
+	////	<param name="otherActor">The other actor that was hit</param>
+	////	<param name="otherComponent">The overlaped component of  the other actor</param>
+	////	<param name="otherBodyIndex">Index of the body that was overlapped</param>
+	////	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
+	////	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
+	//void OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult);
+
 	UFUNCTION()
 	//	<summary>
-	//	Collision implimentation on overlap
+	//	Implimentation of end overlap
 	//	</summary>
 	//	<param name="overlappingComponent">The component that detected the hit</param>
 	//	<param name="otherActor">The other actor that was hit</param>
@@ -52,7 +65,7 @@ public:
 	//	<param name="otherBodyIndex">Index of the body that was overlapped</param>
 	//	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
 	//	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
-	void OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult);
+	void OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex);
 
 	UFUNCTION()
 	//	<summary>

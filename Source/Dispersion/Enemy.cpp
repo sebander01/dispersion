@@ -26,7 +26,6 @@ void AEnemy::BeginPlay()
 
 	//Get the player
 	player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT(" " + this->GetActorNameOrLabel() + " " + player->GetActorNameOrLabel()));
 
 }
 

@@ -36,13 +36,14 @@ void APlayerScript::BeginPlay()
 	playerBody = GetCharacterMovement();
 
 	//Bind collision to our player object that is a capsule collected in the constructor
-	//Bind overlap event
-	PlayerCollision->OnComponentBeginOverlap.AddDynamic(this, &APlayerScript::OnActorBeginOverlap);
+	//Bind end event
+	PlayerCollision->OnComponentEndOverlap.AddDynamic(this, &APlayerScript::OnActorEndOverlap);
 	//Bind hit event
 	PlayerCollision->OnComponentHit.AddDynamic(this, &APlayerScript::OnHit);
 
 	//Fill the list of enemies
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), enemyList);
+
 }
 
 // Called every frame
@@ -71,7 +72,7 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 }
 
 //	<summary>
-//	Collision implimentation on overlap
+//	End overlap
 //	</summary>
 //	<param name="overlappingComponent">The component that detected the hit</param>
 //	<param name="otherActor">The other actor that was hit</param>
@@ -79,11 +80,14 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 //	<param name="otherBodyIndex">Index of the body that was overlapped</param>
 //	<param name="canSweep">If true the overlap was a moving object that used a sweep</param>
 //	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
-void APlayerScript::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex, bool canSweep, const FHitResult& sweepResult)
+void APlayerScript::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex)
 {
-	//If the overlapping object is correctly tagged the same way as the enemy light source we use enemyList[0] because it's the same in each instance
-	if (!otherActor->Tags.Contains(Cast<AEnemy>(enemyList[0])->LightSourceTag))
+	//If the overlapping object contains the tag to tell the game it was a light
+	//Then we need to have the game switch the state to change the player
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT(" " + Cast<AEnemy>(enemyList[0])->LightSourceTag.ToString()));
+	if (otherActor->Tags.Contains(Cast<AEnemy>(enemyList[0])->LightSourceTag))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT("Passed"));
 		//For each enemy in the enemyList
 		for (AActor* enemy : enemyList)
 		{
@@ -91,6 +95,7 @@ void APlayerScript::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponen
 			AEnemy* enemyClass = Cast<AEnemy>(enemy);
 			//change the state of the specifc enemy to move towards the player
 			enemyClass->enemyState = EEnemyMovement::TowardsTarget;
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT("Flipped for enemy: " + enemy->GetName()));
 		}
 	}
 }
@@ -109,11 +114,6 @@ void APlayerScript::OnHit(UPrimitiveComponent* hitComponent, AActor* otherActor,
 	if (otherActor->Tags.Contains(jumpResetTag))
 	{
 		canJump = true;
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Hit"));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Not Hit"));
 	}
 }
 

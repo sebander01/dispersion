@@ -54,7 +54,7 @@ public:
 
 	UFUNCTION()
 	//	<summary>
-	//	Implimentation of begin overlap
+	//	Implimentation of end overlap
 	//	</summary>
 	//	<param name="overlappingComponent">The component that detected the hit</param>
 	//	<param name="otherActor">The other actor that was hit</param>
@@ -83,6 +83,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	AActor* Light;
 
+	UPROPERTY(EditAnywhere, Category = "Test Value")
 	//A variable to get the player
 	AActor* player;
 
