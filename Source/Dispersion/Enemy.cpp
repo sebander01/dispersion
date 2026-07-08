@@ -84,11 +84,7 @@ void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AAct
 //	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
 void AEnemy::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex)
 {
-	//If the tag of the colliding actor is our light tag
-	if (otherActor->Tags.Contains(LightSourceTag))
-	{
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), (this->GetActorForwardVector()) - 2);
-	}
+	enemyState = EEnemyMovement::Stationary;
 }
 
 /// <summary>
@@ -157,10 +153,22 @@ void AEnemy::EnemyReactToLight(float EnemyContinuanceOffset)
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(GetController(), goal);
 		}
 	}
-	//If the enemy shouldn't be moving only turning to the player
+	//If the enemy is on the edge of the light we want them to stay still
 	else if (enemyState == EEnemyMovement::Stationary)
 	{
-		
+		//Unless they can see that the enemy is in shadow then they can give finding the enemy a try again
+		FHitResult hit;
+		//Line trace if we hit anything from a line starting at the enemy position and striking the player
+		//For this to work visbility in the collision settings of the trigger needs to be set to block
+		if(GetWorld()->LineTraceSingleByChannel(hit, this->GetActorForwardVector(), player->GetActorLocation(), ECC_Visibility))
+		{
+			//If we are tracing to player and they are not in light
+			if (!hit.GetActor()->Tags.Contains(LightSourceTag))
+			{
+				//Go towards the player
+				enemyState = EEnemyMovement::TowardsTarget;
+			}
+		}
 	}
 }
 
