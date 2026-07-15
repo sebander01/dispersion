@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Enemy.h"
 #include "PlayerScript.generated.h"
 
@@ -34,6 +35,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Test Value")
 	//A list of actors to the enemies in the world
 	TArray<AActor*> enemyList;
+
+	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
+
+	/// <summary>
+	/// A method to handle camera movement
+	/// </summary>
+	/// <param name="cam"></param>
+	void CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, bool debug);
 
 #pragma region Public Collision functions and properties
 
