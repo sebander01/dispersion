@@ -36,7 +36,7 @@ public:
 	//A list of actors to the enemies in the world
 	TArray<AActor*> enemyList;
 
-	UFUNCTION(BlueprintCallable, Category = "CameraMovement")
+	UFUNCTION(BlueprintCallable, Category = "Camera Controls")
 
 	/// <summary>
 	/// A method to handle camera movement
