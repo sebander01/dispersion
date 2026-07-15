@@ -178,7 +178,7 @@ void APlayerScript::EnableSprint()
 /// A method for handeling the camera position of the player
 /// </summary>
 /// <param name="cam"></param>
-void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, bool debug)
+void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed)
 {
 #pragma region camera
 	//Get mouse position
@@ -189,35 +189,31 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 	int sizeX, sizeY;
 	playerCon->GetViewportSize(sizeX, sizeY);
 
+
+	//Screen space in unreal engine isn't centered so we have to
 	//Center to middle
 	float centeredX = x - (sizeX / 2.0f);
 	float centeredY = y - (sizeY / 2.0f);
 
-	//Verables for the final output
+	//Varables for the final output
 	FVector2D finalOutput;
 
-	//Setting with data from the current output in case neither are adjusted
+	//filling with default date with data from the current output
+	//This is important incase the outputs are never adjusted
 	finalOutput.X = cam->GetRelativeRotation().Yaw;
 	finalOutput.Y = cam->GetRelativeRotation().Pitch;
-
-	//Debug
-	if (debug)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("Centered X: %f"), centeredX));
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Purple, FString::Printf(TEXT("Centered Y: %f"), centeredY));
-	}
 
 	//If between the max and min x
 	if (centeredX <= maxX && centeredX >= minX)
 	{
-		//Adjust speed by delta time * speed to handle camera speed
+		//Change the final output to be the centeredx / speed
 		finalOutput.X = centeredX / speed;
 	}
 
 	//If between the max and min y
 	if (centeredY <= maxY && centeredY >= minY)
 	{
-		//Adjust speed by delta time * speed to handle camera speed
+		//Change the final output to be the centeredy / speed
 		finalOutput.Y = centeredY / speed;
 	}
 

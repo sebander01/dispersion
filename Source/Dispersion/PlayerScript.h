@@ -42,7 +42,7 @@ public:
 	/// A method to handle camera movement
 	/// </summary>
 	/// <param name="cam"></param>
-	void CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, bool debug);
+	void CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed);
 
 #pragma region Public Collision functions and properties
 
