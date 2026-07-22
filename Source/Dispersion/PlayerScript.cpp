@@ -18,6 +18,11 @@ APlayerScript::APlayerScript()
 void APlayerScript::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//These settings must be turned off for rotation on the movement component to work
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
 	//Set can jump to true
 	canJump = true;
 
@@ -178,7 +183,7 @@ void APlayerScript::EnableSprint()
 /// A method for handeling the camera position of the player
 /// </summary>
 /// <param name="cam"></param>
-void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed)
+void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed)
 {
 #pragma region camera
 	//Get mouse position
@@ -226,13 +231,13 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 	if (centeredX > maxX)
 	{
 		//Turn left
-		this->SetActorRelativeRotation(FRotator(playerBody->GetActorTransform().GetRotation().Y, playerBody->GetActorTransform().GetRotation().X + playerSpeed, playerBody->GetActorTransform().GetRotation().W));
+		this->SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw + turnSpeed, GetActorRotation().Roll));
 	}
 	//if output is lower then the minimum of x
 	else if (centeredX < minX)
 	{
 		//Turn right
-		this->SetActorRelativeRotation(FRotator(playerBody->GetActorTransform().GetRotation().Y, playerBody->GetActorTransform().GetRotation().X - playerSpeed, playerBody->GetActorTransform().GetRotation().W));
+		this->SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw - turnSpeed, GetActorRotation().Roll));
 	}
 #pragma endregion
 }
