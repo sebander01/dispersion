@@ -74,6 +74,9 @@ void APlayerScript::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	//Bind jumping control
 	CurrentInputComponent->BindAction(playerJump, ETriggerEvent::Triggered, this, &APlayerScript::PlayerJump);
+
+	//Bind movement
+	CurrentInputComponent->BindAction(MoveDirection, ETriggerEvent::Triggered, this, &APlayerScript::PlayerMovement);
 }
 
 //	<summary>
@@ -123,24 +126,29 @@ void APlayerScript::OnHit(UPrimitiveComponent* hitComponent, AActor* otherActor,
 /// This method allows for player movement
 /// </summary>
 /// <param name="playerBody"></param>
-void APlayerScript::PlayerMovement(FVector direction)
+void APlayerScript::PlayerMovement(const FInputActionValue& Value)
 {
+	//Get the direction from our control as a 2D vector value
+	//Because of the way we assigned the values we know that +1 y is forwads -1 y is backwards -1 x is left and +1 x is right
+	FVector2D direction = Value.Get<FVector2D>();
 	//If sprinting
 	if (sprinting)
 	{
-		//Move the player body based on the direction variable assigned in the blueprint
-		playerBody->AddImpulse(direction * sprintSpeed);
+		//Move the player body based on the direction variable
+		//This equation works because if an x direction is not pressed or a y direction is not pressed it's 0 and anything * 0 is 0 so if the player is moving forward but not left it should look like 0, forwardVector * 1 * sprint speed
+		playerBody->AddImpulse(FVector(GetActorForwardVector() * direction.Y + GetActorRightVector() * direction.X) * sprintSpeed);
 	}
 	//If not sprinting
 	else
 	{
-		//Move the player body based on the direction variable assigned in the blueprint
-		playerBody->AddImpulse(direction * playerSpeed);
+		//Move the player body based on the direction variable
+		//This equation works because if an x direction is not pressed or a y direction is not pressed it's 0 and anything * 0 is 0 so if the player is moving forward but not left it should look like 0, forwardVector * 1 * sprint speed
+		playerBody->AddImpulse(FVector(GetActorForwardVector() * direction.Y + GetActorRightVector() * direction.X) * playerSpeed);
 	}
 }
 
 //A method to allow the player to jump
-void APlayerScript::PlayerJump()
+void APlayerScript::PlayerJump(const FInputActionValue& Value)
 {
 	//If we can jump
 	if (canJump)
@@ -163,7 +171,7 @@ void APlayerScript::PlayerJump()
 }
 
 //A method to enable sprinting
-void APlayerScript::EnableSprint()
+void APlayerScript::EnableSprint(const FInputActionValue& Value)
 {
 	//If sprinting is enabled
 	if (sprinting)

@@ -97,10 +97,10 @@ public:
 
 #pragma region Public Player Movement
 	//A method to enable sprinting
-	void EnableSprint();
+	void EnableSprint(const FInputActionValue& Value);
 
 	UFUNCTION(BlueprintCallable, Category = "Player Movement")
-	void PlayerMovement(FVector direction);
+	void PlayerMovement(const FInputActionValue& Value);
 
 	UCharacterMovementComponent* playerBody;
 
@@ -113,7 +113,7 @@ public:
 	float sprintSpeed;
 
 	//Player Jump Function
-	void PlayerJump();
+	void PlayerJump(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, Category = "Player Movement")
 	float playerJumpForce;
@@ -132,6 +132,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input Mapping")
 	//Input action jumping
 	UInputAction* playerJump;
+
+	UPROPERTY(EditAnywhere, Category = "Input Mapping")
+	//Input action move forwards
+	UInputAction* MoveDirection;
 
 	//The input mapping for player
 	UPROPERTY(EditAnywhere, Category = "Input Mapping");
