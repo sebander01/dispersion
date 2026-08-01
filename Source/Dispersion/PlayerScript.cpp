@@ -19,7 +19,7 @@ void APlayerScript::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//These settings must be turned off for rotation on the movement component to work
+	//These settings must be turned off for rotation to work so rotation isn't overridden
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
@@ -191,7 +191,7 @@ void APlayerScript::EnableSprint(const FInputActionValue& Value)
 /// A method for handeling the camera position of the player
 /// </summary>
 /// <param name="cam"></param>
-void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed)
+void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed, float deltaTime)
 {
 #pragma region camera
 	//Get mouse position
@@ -216,7 +216,7 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 	finalOutput.X = cam->GetRelativeRotation().Yaw;
 	finalOutput.Y = cam->GetRelativeRotation().Pitch;
 
-	//If between the max and min x
+	////If between the max and min x
 	if (centeredX <= maxX && centeredX >= minX)
 	{
 		//Change the final output to be the centeredx / speed
@@ -235,18 +235,7 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 #pragma endregion
 
 #pragma region movement
-	//If output is bigger then the max of x
-	if (centeredX > maxX)
-	{
-		//Turn left
-		this->SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw + turnSpeed, GetActorRotation().Roll));
-	}
-	//if output is lower then the minimum of x
-	else if (centeredX < minX)
-	{
-		//Turn right
-		this->SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw - turnSpeed, GetActorRotation().Roll));
-	}
+	this->SetActorRotation(FRotator(0.0f, cam->GetComponentRotation().Yaw + turnSpeed, 0.0f));
 #pragma endregion
 }
 #pragma endregion
