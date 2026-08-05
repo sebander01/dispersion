@@ -21,6 +21,7 @@ void APlayerScript::BeginPlay()
 
 	//These settings must be turned off for rotation to work so rotation isn't overridden
 	bUseControllerRotationYaw = false;
+	bUseControllerRotationPitch = false;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	//Set can jump to true
@@ -191,9 +192,9 @@ void APlayerScript::EnableSprint(const FInputActionValue& Value)
 /// A method for handeling the camera position of the player
 /// </summary>
 /// <param name="cam"></param>
-void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed, float deltaTime)
+void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed, float sensitivity)
 {
-#pragma region camera
+#pragma region cameraandrotationmovement
 	//Get mouse position
 	float x, y;
 	playerCon->GetMousePosition(x, y);
@@ -211,17 +212,19 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 	//Varables for the final output
 	FVector2D finalOutput;
 
-	//filling with default date with data from the current output
-	//This is important incase the outputs are never adjusted
-	finalOutput.X = cam->GetRelativeRotation().Yaw;
+	//If the conditions below are not met we want to have default values of the current pitch and yaw
+	finalOutput.X = playerCon->GetControlRotation().Yaw;
 	finalOutput.Y = cam->GetRelativeRotation().Pitch;
 
-	////If between the max and min x
-	if (centeredX <= maxX && centeredX >= minX)
-	{
-		//Change the final output to be the centeredx / speed
-		finalOutput.X = centeredX / speed;
-	}
+	//If between the max and min x
+	//if (centeredX <= maxX && centeredX >= minX)
+	//{
+	//	//Change the final output to be the centeredx / speed
+	//	finalOutput.X = centeredX / speed;
+	//}
+
+	//We don't need to worry about where our x is it will never overlap  the player object with the changes to the system
+	finalOutput.X = centeredX / speed;
 
 	//If between the max and min y
 	if (centeredY <= maxY && centeredY >= minY)
@@ -230,12 +233,16 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 		finalOutput.Y = centeredY / speed;
 	}
 
-	//Set the rotation of the camera based on the position of the mouse
-	cam->SetRelativeRotation(FRotator(finalOutput.Y, finalOutput.X, cam->GetRelativeRotation().Roll));
-#pragma endregion
+	//Set the rotation of the camera and player rotation based on the position of the mouse using player controller rotation
+	playerCon->SetControlRotation(FRotator(0.0f, finalOutput.X, 0.0f));
 
-#pragma region movement
-	this->SetActorRotation(FRotator(0.0f, cam->GetComponentRotation().Yaw + turnSpeed, 0.0f));
+	//Rotate the actor to match camera position
+	this->SetActorRelativeRotation(FRotator(0.0f, finalOutput.X, 0.0f));
+
+	//Set the y of camera seperately because we don't want it to change the body
+	cam->SetRelativeRotation(FRotator(finalOutput.Y, 0.0f, 0.0f));
+
+	UE_LOG(LogTemp, Warning, TEXT("Test for y: %f"), finalOutput.Y);
 #pragma endregion
 }
 #pragma endregion
