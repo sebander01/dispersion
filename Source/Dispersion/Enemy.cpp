@@ -63,14 +63,6 @@ void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AAct
 		//The enemy is in light and needs to move away from it
 		enemyState = EEnemyMovement::AwayFromTarget;
 	}
-	//If the colliding object is not a light
-	else
-	{
-		////The enemy is not in light and should move towards the target
-		//enemyState = EEnemyMovement::TowardsTarget;
-		//When we are not overlapping the light we should stop
-		enemyState = EEnemyMovement::Stationary;
-	}
 }
 
 //	<summary>
@@ -84,7 +76,11 @@ void AEnemy::OnActorBeginOverlap(UPrimitiveComponent* overlappingComponent, AAct
 //	<param name="sweepResult">Extra information about the overlap when bFromSweep is true</param>
 void AEnemy::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, int32 otherBodyIndex)
 {
-	enemyState = EEnemyMovement::Stationary;
+	//If not in light source anymore
+	if (otherActor->Tags.Contains(LightSourceTag))
+	{
+		enemyState = EEnemyMovement::Stationary;
+	}
 }
 
 /// <summary>
@@ -107,7 +103,7 @@ void AEnemy::EnemyReactToLight(float EnemyContinuanceOffset)
 			//Take our collision from the coliding object (Light) by grabbing the first collision
 			USphereComponent* boundingBox = Light->FindComponentByClass<USphereComponent>();
 
-			//Use the collision box to find the radius (Edge) of the sphere
+			//Use the collision box to find the radius (Edge) of the sphere where w is radius
 			double radius = boundingBox->GetLocalBounds().GetSphere().W;
 
 			//Take the center of the edge
@@ -137,7 +133,7 @@ void AEnemy::EnemyReactToLight(float EnemyContinuanceOffset)
 			if (center.Y < enemyPos.GetLocation().Y)
 			{
 				//If enemy is on the right they should continue right to the edge of the sphere and then past it with our offset
-				goal.Y = center.Y + radius + EnemyContinuanceOffset;
+				goal.Y = 1 + radius + EnemyContinuanceOffset;
 			}
 			//If center is more then the Y position of enemy the enemy is on the left
 			else if (center.Y > enemyPos.GetLocation().Y)
