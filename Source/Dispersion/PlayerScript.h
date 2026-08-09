@@ -39,10 +39,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Camera Controls")
 
 	/// <summary>
-	/// A method to handle camera movement
+	/// A method to handle camera rotation and player rotation
 	/// </summary>
 	/// <param name="cam"></param>
-	void CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed, float sensitivity);
+	void CameraControls(UCameraComponent* cam, float maxY, float minY, float sensitivity);
 
 #pragma region Public Collision functions and properties
 

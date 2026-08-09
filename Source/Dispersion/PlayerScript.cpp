@@ -189,13 +189,14 @@ void APlayerScript::EnableSprint(const FInputActionValue& Value)
 }
 
 /// <summary>
-/// A method for handeling the camera position of the player
+/// A method for handeling the camera position of the player and player rotation
 /// </summary>
 /// <param name="cam"></param>
-void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX, float maxY, float minY, float speed, float turnSpeed, float sensitivity)
+void APlayerScript::CameraControls(UCameraComponent* cam, float maxY, float minY, float sensitivity)
 {
 #pragma region cameraandrotationmovement
 	//Get mouse position
+	//We will use this later for max Y
 	float x, y;
 	playerCon->GetMousePosition(x, y);
 
@@ -203,16 +204,21 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 	int sizeX, sizeY;
 	playerCon->GetViewportSize(sizeX, sizeY);
 
+	//Get direction
+	float directionX, directionY;
+	playerCon->GetInputMouseDelta(directionX, directionY);
+
 
 	//Screen space in unreal engine isn't centered so we have to
 	//Center to middle
-	float centeredX = x - (sizeX / 2.0f);
+	//float centeredX = x - (sizeX / 2.0f);
 	float centeredY = y - (sizeY / 2.0f);
 
 	//Varables for the final output
 	FVector2D finalOutput;
 
 	//If the conditions below are not met we want to have default values of the current pitch and yaw
+	//This will also be important in our equation as we need to use the control yaw and relative pitch respectively in the equation
 	finalOutput.X = playerCon->GetControlRotation().Yaw;
 	finalOutput.Y = cam->GetRelativeRotation().Pitch;
 
@@ -223,14 +229,17 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 	//	finalOutput.X = centeredX / speed;
 	//}
 
-	//We don't need to worry about where our x is it will never overlap  the player object with the changes to the system
-	finalOutput.X = centeredX / speed;
+	//We don't need to worry about where our x is it will never overlap the player object with the changes to the system
+	//The equation is effectively controlrotation().yaw + direction of x * sensativity
+	//Current rotation + mouse movement this frame * scaler for sensativity
+	//This works because we are effectively saying change the current position of the camera by the mouse movement this frame and scale it by our sensativity 
+	finalOutput.X += directionX * sensitivity;
 
-	//If between the max and min y
+	//If between the max and min y based on screen space to get an exact position
 	if (centeredY <= maxY && centeredY >= minY)
 	{
-		//Change the final output to be the centeredy / speed
-		finalOutput.Y = centeredY / speed;
+		//Change the final output to be the directionY * speed the formal logic is the same as the near identical formula above
+		finalOutput.Y += directionY * sensitivity;
 	}
 
 	//Set the rotation of the camera and player rotation based on the position of the mouse using player controller rotation
@@ -241,8 +250,6 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxX, float minX
 
 	//Set the y of camera seperately because we don't want it to change the body
 	cam->SetRelativeRotation(FRotator(finalOutput.Y, 0.0f, 0.0f));
-
-	UE_LOG(LogTemp, Warning, TEXT("Test for y: %f"), finalOutput.Y);
 #pragma endregion
 }
 #pragma endregion
