@@ -100,14 +100,12 @@ void AEnemy::EnemyReactToLight(float offset)
 		//If we have a light source
 		if (Light != NULL)
 		{
-			//Take our collision from the coliding object (Light) by grabbing the first collision
-			USphereComponent* boundingBox = Light->FindComponentByClass<USphereComponent>();
 
 			//Use the collision box to find the radius (Edge) of the sphere where w is radius
-			double radius = boundingBox->Bounds.GetSphere().W;
+			double radius = Light->FindComponentByClass<USphereComponent>()->Bounds.GetSphere().W;
 
 			//Take the center of the edge
-			FVector center = boundingBox->Bounds.Origin;
+			FVector center = Light->FindComponentByClass<USphereComponent>()->Bounds.Origin;
 
 			//Enemy position
 			FTransform enemyPos = this->GetActorTransform();
