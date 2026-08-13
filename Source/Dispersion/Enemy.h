@@ -67,12 +67,15 @@ public:
 	//Collision for enemy
 	UCapsuleComponent* EnemyCollision;
 
+	bool stopped = false;
+
 #pragma endregion
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
 	float walkingSpeed;
 
 	UFUNCTION(BlueprintCallable, Category = "Enemy Behavior")
-	void EnemyReactToLight(float EnemyContinuanceOffset);
+	void EnemyReactToLight();
 
 	//Variables for light sources
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")
