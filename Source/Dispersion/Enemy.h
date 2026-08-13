@@ -75,7 +75,7 @@ public:
 	float walkingSpeed;
 
 	UFUNCTION(BlueprintCallable, Category = "Enemy Behavior")
-	void EnemyReactToLight();
+	void EnemyReactToLight(float offset);
 
 	//Variables for light sources
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Variables")

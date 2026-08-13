@@ -86,7 +86,7 @@ void AEnemy::OnActorEndOverlap(UPrimitiveComponent* overlappingComponent, AActor
 /// <summary>
 /// React to light follow the player if not in light
 /// </summary>
-void AEnemy::EnemyReactToLight()
+void AEnemy::EnemyReactToLight(float offset)
 {
 	//If not in light
 	if (enemyState == EEnemyMovement::TowardsTarget)
@@ -119,13 +119,13 @@ void AEnemy::EnemyReactToLight()
 			if (center.X < enemyPos.GetLocation().X)
 			{
 				//If enemy is on the top they should continue moving up to the edge of the sphere and then past it with our offset
-				goal.X = center.X + radius;
+				goal.X = center.X + (radius - offset);
 			}
 			//If center is more then the x position of enemy the enemy is on the bottom
 			else if (center.X > enemyPos.GetLocation().X)
 			{
 				//If enemy is on the bottom they should continue moving down to the edge of the sphere and then past it with our offset
-				goal.X = center.X - radius;
+				goal.X = center.X - (radius - offset);
 			}
 
 			//Repeat for Y (Left and right)
@@ -133,13 +133,13 @@ void AEnemy::EnemyReactToLight()
 			if (center.Y < enemyPos.GetLocation().Y)
 			{
 				//If enemy is on the right they should continue right to the edge of the sphere and then past it with our offset
-				goal.Y = center.Y + radius;
+				goal.Y = center.Y + (radius - offset);
 			}
 			//If center is more then the Y position of enemy the enemy is on the left
 			else if (center.Y > enemyPos.GetLocation().Y)
 			{
 				//If enemy is on the left they should continue left to the edge of the sphere and then past it with our offset
-				goal.Y = center.Y - radius;
+				goal.Y = center.Y - (radius - offset);
 			}
 
 			//Goal needs a z axis we can just copy the z axis of the enemy because we can assume the enemy can walk at the elivation of the enemy
