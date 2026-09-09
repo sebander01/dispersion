@@ -242,7 +242,7 @@ void APlayerScript::CameraControls(UCameraComponent* cam, float maxY, float minY
 		finalOutput.Y += directionY * sensitivity;
 	}
 
-	//Set the rotation of the camera and player rotation based on the position of the mouse using player controller rotation
+	//Set the rotation of the camera rotation based on the position of the mouse using player controller rotation
 	playerCon->SetControlRotation(FRotator(0.0f, finalOutput.X, 0.0f));
 
 	//Rotate the actor to match camera position
